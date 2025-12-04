@@ -36,6 +36,19 @@ export default function Home() {
   const [selectedSchool, setSelectedSchool] = useState<ISchool | null>(null);
   const [loading, setLoading] = useState(true);
   
+  // Metadata state
+  const [metadata, setMetadata] = useState<{
+    academic_groups: string[];
+    colleges: string[];
+    regions: string[];
+    cities: string[];
+  }>({
+    academic_groups: [],
+    colleges: [],
+    regions: [],
+    cities: []
+  });
+
   // Filter states
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
@@ -46,10 +59,22 @@ export default function Home() {
         const res = await fetch('/api/schools');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
-        setSchools(data);
-        setFilteredSchools(data);
-        if (data.length > 0) {
-          setSelectedSchool(data[0]);
+        
+        // Handle new API structure { metadata, schools }
+        if (data.schools && data.metadata) {
+          setSchools(data.schools);
+          setFilteredSchools(data.schools);
+          setMetadata(data.metadata);
+          if (data.schools.length > 0) {
+            setSelectedSchool(data.schools[0]);
+          }
+        } else if (Array.isArray(data)) {
+          // Fallback for old API structure
+          setSchools(data);
+          setFilteredSchools(data);
+          if (data.length > 0) {
+            setSelectedSchool(data[0]);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch schools:', error);
@@ -70,13 +95,19 @@ export default function Home() {
         const mainCampus = school.campuses.find(c => c.is_main);
         const city = mainCampus?.location.city || '';
         
+        // Use metadata regions if available, or fallback to hardcoded logic
+        // For now, let's keep the hardcoded logic as the API returns regions but we need to map school city to region
+        // Actually, we can use the metadata.regions list for the UI, but for filtering we still need to know which city belongs to which region.
+        // The API returns regions, but the school object only has city.
+        // Let's keep the client-side mapping for now to ensure filtering works.
         return selectedRegions.some(region => {
           if (region === '北北基') return city.includes('台北') || city.includes('新北') || city.includes('基隆');
           if (region === '桃竹苗') return city.includes('桃園') || city.includes('新竹') || city.includes('苗栗');
           if (region === '中彰投') return city.includes('台中') || city.includes('彰化') || city.includes('南投');
           if (region === '雲嘉南') return city.includes('雲林') || city.includes('嘉義') || city.includes('台南');
-          if (region === '高屏金') return city.includes('高雄') || city.includes('屏東') || city.includes('金門');
+          if (region === '高屏') return city.includes('高雄') || city.includes('屏東');
           if (region === '宜花東') return city.includes('宜蘭') || city.includes('花蓮') || city.includes('台東');
+          if (region === '離島') return city.includes('澎湖') || city.includes('金門') || city.includes('連江');
           return false;
         });
       });
@@ -132,17 +163,6 @@ export default function Home() {
       return school.school_images[0];
     }
     return `https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1200&auto=format&fit=crop`;
-  };
-
-  // Get unique academic groups from all schools
-  const getAcademicGroups = () => {
-    const groups = new Set<string>();
-    schools.forEach(school => {
-      school.departments.forEach(dept => {
-        groups.add(dept.academic_group);
-      });
-    });
-    return Array.from(groups).sort();
   };
 
   if (loading) {
@@ -234,7 +254,7 @@ export default function Home() {
               <span className="caret"></span>
             </button>
             <div className="checklist">
-              {['北北基', '桃竹苗', '宜花東', '中彰投', '雲嘉南', '高屏金'].map(region => (
+              {(metadata.regions.length > 0 ? metadata.regions : ['北北基', '桃竹苗', '宜花東', '中彰投', '雲嘉南', '高屏', '離島']).map(region => (
                 <label key={region}>
                   <input 
                     type="checkbox" 
@@ -254,7 +274,7 @@ export default function Home() {
               <span className="caret"></span>
             </button>
             <div className="checklist long">
-              {getAcademicGroups().map(group => (
+              {(metadata.academic_groups.length > 0 ? metadata.academic_groups : []).map(group => (
                 <label key={group}>
                   <input 
                     type="checkbox" 
