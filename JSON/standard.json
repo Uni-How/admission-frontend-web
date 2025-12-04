@@ -1,0 +1,248 @@
+{
+  // ==================== 學校基本資訊 ====================
+  "school_id": "001",                    // [必填][string] 學校代碼（唯一識別碼）
+  "school_name": "國立臺灣大學",          // [必填][string] 學校全名
+  "school_type": "國立",                  // [必填][string] 學校類型（國立/私立/公立）
+  
+  "school_images": [                     // [必填][Array<string>] 學校圖片 URL 列表（可為空陣列）
+    "https://example.com/images/ntu-gate.jpg",
+    "https://example.com/images/ntu-library.jpg"
+  ],
+  
+  "school_url": "https://www.ntu.edu.tw/", // [必填][string] 學校官方網站
+
+  // ==================== 校區資訊 ====================
+  "campuses": [                          // [必填][Array<Campus>] 校區列表（至少一個，且至少一個 is_main 為 true）
+    {
+      "campus_id": "C001",               // [必填][string] 校區代碼（學校內唯一）
+      "campus_name": "校總區",            // [必填][string] 校區名稱
+      "is_main": true,                   // [必填][boolean] 是否為主校區（必須有一個為 true）
+      "location": {                      // [必填][object] 校區位置資訊
+        "city": "臺北市",                 // [必填][string] 城市
+        "district": "大安區",             // [必填][string] 行政區
+        "address": "羅斯福路四段1號",     // [必填][string] 詳細地址
+        "google_map_url": "https://maps.google.com/?q=國立臺灣大學" // [選填][string] Google 地圖連結
+      }
+    }
+  ],
+
+  // ==================== 系所資訊 ====================
+  "departments": [                       // [必填][Array<Department>] 系所列表
+    {
+      "department_id": "001152",         // [必填][string] 系所代碼（全國唯一）
+      "department_name": "資訊工程學系",  // [必填][string] 系所全名
+      "college": "電機資訊學院",          // [必填][string] 所屬學院（不可為空字串）
+      "academic_group": "資訊",           // [必填][string] 學群分類（資訊/工程/醫藥衛生/數理化/生命科學/生物資源/地球環境/建築設計/藝術/社會心理/大眾傳播/外語/文史哲/教育/法政/管理/財經/遊憩運動/不分系）
+      "campus_ids": ["C001"],            // [必填][Array<string>] 所屬校區 ID 列表（必須對應 campuses 中的 campus_id）
+      "department_description": "本系以培養資訊工程領域之高級專業人才為目標，課程涵蓋計算機理論、軟體設計、硬體結構及網路通訊等核心領域。", // [選填][string] 系所簡介
+      "years_of_study": 4,               // [必填][number] 修業年限
+
+      // ==================== 招生資料 ====================
+      "admission_data": {                // [必填][object] 各學年度招生資料
+        "114": {                         // [key: string] 學年度（例如："114", "113"）
+          "plans": {                     // [必填][object] 各招生管道資料
+            
+            // -------------------- 個人申請 --------------------
+            "personal_application": {    // [選填][object] 個人申請管道（學測）
+              "quota": 80,               // [必填][number] 招生名額（必須是數字，非字串）
+              
+              "exam_thresholds": [       // [必填][Array<ExamThreshold>] 學測檢定標準
+                {
+                  "subject": "國文",      // [必填][string] 科目名稱（國文/英文/數學A/數學B/社會/自然）
+                  "exam_type": "學測",    // [必填][string] 考試類型（固定為"學測"）
+                  "threshold": "均標"     // [必填][string] 檢定標準（頂標/前標/均標/後標/底標）
+                },
+                { "subject": "英文", "exam_type": "學測", "threshold": "均標" },
+                { "subject": "數學A", "exam_type": "學測", "threshold": "均標" },
+                { "subject": "自然", "exam_type": "學測", "threshold": "均標" }
+              ],
+              
+              "selection_multipliers": [ // [必填][Array<SelectionMultiplier>] 篩選倍率（必須是陣列，非字串）
+                {
+                  "subject": "數學A",    // [必填][string] 科目名稱
+                  "multiplier": 5,       // [必填][number|null] 篩選倍率（null 表示僅比序不篩選）
+                  "order": 1             // [必填][number] 篩選順序（數字越小優先度越高）
+                },
+                { "subject": "自然", "multiplier": 3, "order": 2 },
+                { "subject": "國文", "multiplier": null, "order": 3 }
+              ],
+              
+              "english_listening_threshold": "B級", // [選填][string|null] 英聽檢定標準（A級/B級/C級/F級 或 null）
+              
+              "last_year_pass_data": {   // [選填][object] 去年最低通過資料（篩選順序）
+                "academic_year": 113,    // [必填][number] 資料學年度
+                "passing_sequence": [    // [必填][Array<PassingData>] 通過級分序列（依篩選順序）
+                  {
+                    "subject": "國英數A自", // [必填][string] 科目組合或單科
+                    "grade": 55,         // [必填][number] 通過級分（可為小數）
+                    "note": "四科組合"    // [選填][string|null] 備註說明
+                  },
+                  { "subject": "數學A", "grade": 15, "note": null },
+                  { "subject": "自然", "grade": 14, "note": null }
+                ]
+              }
+            },
+
+            // -------------------- 分發入學 --------------------
+            "distribution_admission": {  // [選填][object] 分發入學管道（採計學測+分科）
+              "quota": 45,               // [必填][number] 招生名額
+              
+              "exam_thresholds": [       // [必填][Array<ExamThreshold>] 學測檢定標準
+                { "subject": "英文", "exam_type": "學測", "threshold": "均標" },
+                { "subject": "自然", "exam_type": "學測", "threshold": "均標" },
+                { "subject": "數學A", "exam_type": "學測", "threshold": "均標" }
+              ],
+              
+              "english_listening_threshold": null, // [選填][string|null] 英聽檢定標準
+              
+              "scoring_weights": [       // [必填][Array<ScoringWeight>] 採計科目加權
+                {
+                  "subject": "數學甲",   // [必填][string] 科目名稱
+                  "source_type": "分科", // [必填][string] 成績來源（學測/分科）
+                  "multiplier": 2.0,     // [必填][number] 加權倍數
+                  "order": 1             // [選填][number] 同分參酌順序（數字越小優先度越高）
+                },
+                { "subject": "物理", "source_type": "分科", "multiplier": 1.5, "order": 2 },
+                { "subject": "化學", "source_type": "分科", "multiplier": 1.0, "order": 3 },
+                { "subject": "英文", "source_type": "學測", "multiplier": 1.0, "order": 4 },
+                { "subject": "國文", "source_type": "學測", "multiplier": 1.0, "order": 5 }
+              ],
+              
+              "art_test_category": null, // [選填][string|null] 術科考試類別（音樂/美術/體育 等）
+              
+              "tie_breakers": [          // [選填][Array<string>] 同分參酌順序說明（純文字描述）
+                "數學甲", "物理", "英文", "化學", "國文"
+              ],
+              
+              "last_year_pass_data": {   // [選填][object] 去年最低錄取資料
+                "academic_year": 113,    // [必填][number] 資料學年度
+                "passing_sequence": [    // [必填][Array<PassingData>] 錄取分數序列
+                  {
+                    "subject": "普通生", // [必填][string] 類別（普通生/原住民/離島等）
+                    "grade": 435.5,      // [必填][number] 最低錄取總分
+                    "note": "英 50"      // [選填][string|null] 同分參酌備註
+                  }
+                ]
+              }
+            },
+
+            // -------------------- 繁星推薦 --------------------
+            "star_plan": {               // [選填][object] 繁星推薦管道
+              "quota": 10,               // [必填][number] 招生名額
+              
+              "exam_thresholds": [       // [必填][Array<ExamThreshold>] 學測檢定標準
+                { "subject": "國文", "exam_type": "學測", "threshold": "前標" },
+                { "subject": "英文", "exam_type": "學測", "threshold": "前標" },
+                { "subject": "數學A", "exam_type": "學測", "threshold": "頂標" },
+                { "subject": "自然", "exam_type": "學測", "threshold": "頂標" }
+              ],
+              
+              "ranking_criteria": [      // [必填][Array<RankingCriterion>] 校內排名條件
+                {
+                  "item": "學業成績總平均", // [必填][string] 排名項目
+                  "percentile": 20       // [必填][number] 百分比門檻（前20%）
+                },
+                { "item": "數學A", "percentile": 10 }
+              ],
+              
+              "last_year_pass_data": {   // [選填][object] 去年通過資料
+                "academic_year": 113,
+                "passing_sequence": [
+                  { "subject": "在校成績", "grade": 1, "note": "校排第1名" }
+                ]
+              }
+            }
+          }
+        },
+
+        // -------------------- 其他學年度 --------------------
+        "113": {                         // 歷年資料（可選，結構同 114，可部分省略）
+          "plans": {
+            "personal_application": {
+              "quota": 75
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
+// ==================== 型別定義說明 ====================
+/*
+【必填欄位標記】
+- [必填]: 該欄位必須存在且不可為 null 或 undefined
+- [選填]: 該欄位可以不存在，或為 null
+
+【型別說明】
+- string: 字串
+- number: 數字（整數或浮點數）
+- boolean: 布林值（true/false）
+- Array<T>: 陣列，T 為元素型別
+- object: 物件
+- null: 空值
+
+【空值處理規範】
+1. 必填的字串欄位:
+   - ✅ "college": "電機資訊學院"
+   - ❌ "college": ""                    // 不可空字串
+   - ❌ "college": null                  // 不可 null
+
+2. 必填的數字欄位:
+   - ✅ "quota": 80
+   - ✅ "quota": 0                       // 0 也是有效數字
+   - ❌ "quota": "80"                    // 不可字串
+   - ❌ "quota": null                    // 不可 null
+   - ❌ "quota": ""                      // 不可空字串
+
+3. 必填的陣列欄位:
+   - ✅ "exam_thresholds": [...]         // 有資料
+   - ✅ "exam_thresholds": []            // 空陣列表示無檢定
+   - ❌ "exam_thresholds": null          // 不可 null
+   - ❌ "exam_thresholds": ""            // 不可字串
+
+4. 選填欄位:
+   - ✅ "art_test_category": "音樂"     // 有值
+   - ✅ "art_test_category": null        // null 表示無術科
+   - ✅ 整個 key 可以省略               // 選填可不存在
+   - ❌ "art_test_category": ""          // 不建議空字串
+
+5. 特殊規則:
+   - multiplier 為 null: 表示該科目僅用於比序，不設倍率
+   - 空陣列 []: 表示該項目目前無資料（如無檢定標準）
+   - 省略整個 plan: 表示該管道不招生（如某系所無繁星）
+
+【學群分類標準】
+資訊, 工程, 數理化, 醫藥衛生, 生命科學, 生物資源, 地球環境,
+建築設計, 藝術, 社會心理, 大眾傳播, 外語, 文史哲, 教育,
+法政, 管理, 財經, 遊憩運動, 不分系
+
+【常見錯誤】
+1. ❌ quota 使用字串 "80" 而非數字 80
+2. ❌ selection_multipliers 使用空字串 "" 而非空陣列 []
+3. ❌ college 欄位為空字串 "" 而非有意義的學院名稱
+4. ❌ scoring_weights 缺少 source_type 欄位
+5. ❌ 必填陣列使用 null 而非 []
+
+【assessment_standards 說明】
+學測級分標準（頂標/前標/均標/後標/底標對應的分數）為全國統一標準，
+不在此 schema 中定義，應獨立為全局配置檔案：
+  - configs/assessment_standards_114.json
+  - configs/assessment_standards_113.json
+
+格式範例:
+{
+  "academic_year": 114,
+  "academic_ability_test": {
+    "chinese": { "top": 13, "front": 12, "average": 10, "back": 8, "bottom": 6 },
+    "english": { "top": 13, "front": 12, "average": 10, "back": 8, "bottom": 6 },
+    "math_a": { "top": 12, "front": 10, "average": 8, "back": 6, "bottom": 4 },
+    "math_b": { "top": 11, "front": 9, "average": 7, "back": 5, "bottom": 3 },
+    "social": { "top": 13, "front": 12, "average": 10, "back": 8, "bottom": 6 },
+    "nature": { "top": 13, "front": 12, "average": 10, "back": 8, "bottom": 6 }
+  },
+  "english_listening": {
+    "levels": ["A", "B", "C", "F"]
+  }
+}
+*/

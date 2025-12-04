@@ -1,0 +1,58 @@
+{
+  "academic_year": 114,
+  "description": "114學年度學科能力測驗級分標準（全國統一）",
+  "last_updated": "2025-03-01",
+  "academic_ability_test": {
+    "chinese": {
+      "top": 13,
+      "front": 12,
+      "average": 10,
+      "back": 8,
+      "bottom": 6
+    },
+    "english": {
+      "top": 13,
+      "front": 12,
+      "average": 10,
+      "back": 8,
+      "bottom": 6
+    },
+    "math_a": {
+      "top": 12,
+      "front": 10,
+      "average": 8,
+      "back": 6,
+      "bottom": 4
+    },
+    "math_b": {
+      "top": 11,
+      "front": 9,
+      "average": 7,
+      "back": 5,
+      "bottom": 3
+    },
+    "social": {
+      "top": 13,
+      "front": 12,
+      "average": 10,
+      "back": 8,
+      "bottom": 6
+    },
+    "nature": {
+      "top": 13,
+      "front": 12,
+      "average": 10,
+      "back": 8,
+      "bottom": 6
+    }
+  },
+  "english_listening": {
+    "levels": ["A", "B", "C", "F"],
+    "description": {
+      "A": "能幾乎完全聽懂",
+      "B": "能大致聽懂",
+      "C": "僅能聽懂主要訊息",
+      "F": "僅能聽懂少部分訊息"
+    }
+  }
+}
