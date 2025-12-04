@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniHow 大學申請</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">UniHow</div>
+        <nav class="main-nav">
+            <button class="icon-button"><i class="fas fa-user"></i></button>
+            <button class="icon-button"><i class="fas fa-bars"></i></button>
+        </nav>
+    </header>
+
+    <div class="search-bar">
+        <div class="search-section">
+            <div class="search-item active">
+                <label>入學方式</label>
+                <div>申請</div>
+            </div>
+            <div class="search-item">
+                <label>學測成績</label>
+                <div>國:-- 英:-- 數A:-- 數B:-- 自:-- 社:--</div>
+            </div>
+            <div class="search-item">
+                <label>英聽成績</label>
+                <div>A</div>
+            </div>
+            <div class="search-item">
+                <label>學群偏好</label>
+                <div>二類</div>
+            </div>
+            <div class="search-item">
+                <label>公/私立</label>
+                <div>公立</div>
+            </div>
+        </div>
+        <button class="search-button">搜尋</button>
+    </div>
+
+    <main class="container">
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h4>地區</h4>
+                <label><input type="checkbox"> 北北基</label>
+                <label><input type="checkbox"> 桃竹苗</label>
+                <label><input type="checkbox"> 宜花東</label>
+                <label><input type="checkbox"> 中彰投</label>
+                <label><input type="checkbox"> 雲嘉南</label>
+                <label><input type="checkbox"> 高屏金</label>
+            </div>
+            <div class="filter-section">
+                <h4>學群</h4>
+                <label><input type="checkbox"> 資訊</label>
+                <label><input type="checkbox"> 工程</label>
+                <label><input type="checkbox"> 數理化</label>
+                <label><input type="checkbox"> 醫藥衛生</label>
+                <label><input type="checkbox"> 生命科學</label>
+                <label><input type="checkbox"> 生物資源</label>
+                <label><input type="checkbox"> 地球環境</label>
+                <label><input type="checkbox"> 建築設計</label>
+            </div>
+        </aside>
+
+        <section class="main-content">
+            <div class="content-header">
+                <div class="tabs">
+                    <button class="tab-button active">選校</button>
+                    <button class="tab-button">選系</button>
+                </div>
+                <div class="actions">
+                    <button class="action-button">匯出表格</button>
+                    <button class="action-button">儲存搜尋結果</button>
+                    <button class="action-button">排序方式: 過篩機率</button>
+                    <button class="action-button primary">進階搜尋</button>
+                </div>
+            </div>
+
+            <div class="results-list">
+                <div class="university-card">
+                    <div class="card-info">
+                        <div class="card-header">
+                            <h3>國立臺灣大學</h3>
+                            <span class="capacity">可填科系數 5</span>
+                        </div>
+                        <div class="image-grid">
+                            <img src="https://dummyimage.com/300x200/ccc/000.png&text=NTU+1" alt="國立臺灣大學校園1">
+                            <img src="https://dummyimage.com/300x200/ccc/000.png&text=NTU+2" alt="國立臺灣大學校園2">
+                        </div>
+                        <div class="tags">
+                            <span>資訊</span>
+                            <span>生命科學</span>
+                            <span>建築設計</span>
+                            <span>醫藥衛生</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="view-details">查看詳情 ></button>
+                        <button class="view-map">查看地圖</button>
+                    </div>
+                </div>
+
+                <div class="university-card">
+                    <img src="https://dummyimage.com/150x100/ccc/000.png&text=NTHU" alt="國立清華大學">
+                    <div class="card-info">
+                        <h3>國立清華大學</h3>
+                        <p>可填科系數 8</p>
+                        <span>新竹市東區</span>
+                        <div class="tags">
+                            <span>資訊</span>
+                            <span>生命科學</span>
+                            <span>建築設計</span>
+                        </div>
+                    </div>
+                    <a href="#" class="view-details">查看詳情 ></a>
+                </div>
+
+                <div class="ad-placeholder">
+                    廣告
+                </div>
+
+                <div class="university-card">
+                     <img src="https://dummyimage.com/150x100/ccc/000.png&text=NYCU" alt="國立陽明交通大學">
+                    <div class="card-info">
+                        <h3>國立陽明交通大學</h3>
+                        <p>可填科系數 4</p>
+                    </div>
+                     <a href="#" class="view-details">查看詳情 ></a>
+                </div>
+            </div>
+        </section>
+
+        <aside class="details-panel">
+            <div class="details-header">
+                <div class="image-gallery">
+                    <img src="https://dummyimage.com/200x120/ddd/000.png&text=NTU+Campus" alt="台大校園">
+                    <img src="https://dummyimage.com/100x70/ddd/000.png&text=NTU+Campus" alt="台大校園">
+                    <div class="map-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        查看地圖
+                    </div>
+                </div>
+                <h2>國立臺灣大學</h2>
+                <a href="#" class="school-link">被香港康橋標竿的學校 <i class="fas fa-external-link-alt"></i></a>
+            </div>
+            <div class="details-tabs">
+                <button class="detail-tab-button active">科系列表</button>
+                <button class="detail-tab-button">校園資訊</button>
+            </div>
+            <div class="details-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>學系</th>
+                            <th>科目</th>
+                            <th>門檻</th>
+                            <th>倍率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>農業化學系</td>
+                            <td>國文</td>
+                            <td>均標</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>資訊工程學系</td>
+                            <td>國文</td>
+                            <td>均標</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>建築系</td>
+                            <td>英文</td>
+                            <td>均標</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>醫學系</td>
+                            <td>數學A</td>
+                            <td>均標</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>生命科學系</td>
+                            <td>自然</td>
+                            <td>均標</td>
+                            <td>3</td>
+                        </tr>
+                         <tr>
+                            <td></td>
+                            <td>國英數A自</td>
+                            <td></td>
+                            <td>10</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <a>CollegeI ... 查看更多學系 <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+             <div class="details-footer">
+                去年(112)最低通過篩選分數預測
+                <div>
+                  國英數A自 <span class="score-box">數A</span> <span class="score-box">自然</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+</body>
+</html>
