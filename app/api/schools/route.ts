@@ -397,100 +397,90 @@ export async function GET(request: Request) {
         };
       }
 
-      // Subject Score Filter (學測成績篩選 - 核心邏輯 - Strict Mode Preserved)
+      // Subject Score Filter (學測成績篩選 - 支持AND/OR邏輯)
+      // 新邏輯：根據 group 字段判斷 AND/OR 關係
+      // - 同一 group 內的多個科目 = OR關係 (只需滿足其一)
+      // - 不同 group = AND關係 (所有group都要滿足至少一個科目)
       if (hasScores) {
         const thresholdCheckExpr = {
           $eq: [
-            0, // 目標：失敗科目數 = 0
+            0, // 目標：失敗的 group 數 = 0 (所有group都至少滿足一個科目)
             {
               $size: {
                 $filter: {
-                  input: { $ifNull: ["$__target_plan.exam_thresholds", []] },
-                  as: "th",
-                  cond: {
-                    $let: {
-                      vars: {
-                        subjName: "$$th.subject",
-                        reqLevelStr: "$$th.threshold",
-                      },
+                  input: {
+                    // 先取得所有unique的group IDs
+                    $reduce: {
+                      input: { $ifNull: ["$__target_plan.exam_thresholds", []] },
+                      initialValue: [],
                       in: {
-                        $and: [
-                          { $ne: ["$$reqLevelStr", "無"] },
-                          { $ne: ["$$reqLevelStr", "--"] },
-                          // 比較邏輯：使用者級別 < 學校要求級別 ➜ 視為失敗 (Fail)
-                          {
-                            $lt: [
-                              {
-                                // 1. 取得使用者的該科級別
-                                $switch: {
-                                  branches: [
-                                    {
-                                      case: { $eq: ["$$subjName", "國文"] },
-                                      then: userLevels["國文"] ?? 0,
-                                    },
-                                    {
-                                      case: { $eq: ["$$subjName", "英文"] },
-                                      then: userLevels["英文"] ?? 0,
-                                    },
-                                    {
-                                      case: { $eq: ["$$subjName", "數學A"] },
-                                      then: userLevels["數學A"] ?? 0,
-                                    },
-                                    {
-                                      case: { $eq: ["$$subjName", "數學B"] },
-                                      then: userLevels["數學B"] ?? 0,
-                                    },
-                                    {
-                                      case: { $eq: ["$$subjName", "自然"] },
-                                      then: userLevels["自然"] ?? 0,
-                                    },
-                                    {
-                                      case: { $eq: ["$$subjName", "社會"] },
-                                      then: userLevels["社會"] ?? 0,
-                                    },
-                                  ],
-                                  // --- Partial Match Key (Strict Mode: Missing = 0) ---
-                                  default: 0,
-                                },
-                              },
-                              {
-                                // 2. 取得學校要求的門檻級別
-                                $switch: {
-                                  branches: [
-                                    {
-                                      case: { $eq: ["$$reqLevelStr", "頂標"] },
-                                      then: 5,
-                                    },
-                                    {
-                                      case: { $eq: ["$$reqLevelStr", "前標"] },
-                                      then: 4,
-                                    },
-                                    {
-                                      case: { $eq: ["$$reqLevelStr", "均標"] },
-                                      then: 3,
-                                    },
-                                    {
-                                      case: { $eq: ["$$reqLevelStr", "後標"] },
-                                      then: 2,
-                                    },
-                                    {
-                                      case: { $eq: ["$$reqLevelStr", "底標"] },
-                                      then: 1,
-                                    },
-                                  ],
-                                  default: 0,
-                                },
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    },
+                        $cond: [
+                          { $in: ["$$this.group", "$$value"] },
+                          "$$value",
+                          { $concatArrays: ["$$value", ["$$this.group"]] }
+                        ]
+                      }
+                    }
                   },
-                },
+                  as: "groupId",
+                  cond: {
+                    // 檢查該group是否 ALL items fail (都不滿足 = true)
+                    $eq: [
+                      {
+                        $size: {
+                          $filter: {
+                            input: { $ifNull: ["$__target_plan.exam_thresholds", []] },
+                            as: "th",
+                            cond: {
+                              $and: [
+                                { $eq: ["$$th.group", "$$groupId"] },
+                                // 使用者滿足此科目的門檻
+                                {
+                                  $gte: [
+                                    {
+                                      $switch: {
+                                        branches: [
+                                          { case: { $eq: ["$$th.subject", "國文"] }, then: userLevels["國文"] ?? 0 },
+                                          { case: { $eq: ["$$th.subject", "英文"] }, then: userLevels["英文"] ?? 0 },
+                                          { case: { $eq: ["$$th.subject", "數學A"] }, then: userLevels["數學A"] ?? 0 },
+                                          { case: { $eq: ["$$th.subject", "數學B"] }, then: userLevels["數學B"] ?? 0 },
+                                          { case: { $eq: ["$$th.subject", "自然"] }, then: userLevels["自然"] ?? 0 },
+                                          { case: { $eq: ["$$th.subject", "社會"] }, then: userLevels["社會"] ?? 0 },
+                                        ],
+                                        default: 0,
+                                      }
+                                    },
+                                    {
+                                      $switch: {
+                                        branches: [
+                                          { case: { $eq: ["$$th.threshold", "頂標"] }, then: 5 },
+                                          { case: { $eq: ["$$th.threshold", "前標"] }, then: 4 },
+                                          { case: { $eq: ["$$th.threshold", "均標"] }, then: 3 },
+                                          { case: { $eq: ["$$th.threshold", "後標"] }, then: 2 },
+                                          { case: { $eq: ["$$th.threshold", "底標"] }, then: 1 },
+                                        ],
+                                        default: 0,
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      0 // 該group沒有任何科目被滿足 = 該group失敗
+                    ]
+                  }
+                }
               },
             },
           ],
+        };
+
+        advancedMatch["__target_plan.exam_thresholds"] = {
+          $exists: true,
+          $ne: [],
         };
 
         if (advancedMatch["$expr"]) {
@@ -500,11 +490,6 @@ export async function GET(request: Request) {
         } else {
           advancedMatch["$expr"] = thresholdCheckExpr;
         }
-
-        advancedMatch["__target_plan.exam_thresholds"] = {
-          $exists: true,
-          $ne: [],
-        };
       }
 
       pipeline.push({ $match: advancedMatch });

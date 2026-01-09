@@ -51,7 +51,7 @@ export default function FilterSidebar({
           <span className="caret"></span>
         </button>
         <div className="checklist">
-          {(metadata.regions.length > 0 ? metadata.regions : ['北北基', '桃竹苗', '宜花東', '中彰投', '雲嘉南', '高屏', '離島']).map(region => (
+          {(metadata.regions.length > 0 ? [...metadata.regions].sort() : ['北北基', '桃竹苗', '宜花東', '中彰投', '雲嘉南', '高屏', '離島']).map(region => (
             <label key={region}>
               <input 
                 type="checkbox" 
@@ -71,7 +71,7 @@ export default function FilterSidebar({
           <span className="caret"></span>
         </button>
         <div className="checklist long">
-          {(metadata.academic_groups.length > 0 ? metadata.academic_groups : []).map(group => (
+          {(metadata.academic_groups.length > 0 ? [...metadata.academic_groups].sort((a, b) => a.localeCompare(b, 'zh-TW')) : []).map(group => (
             <label key={group}>
               <input 
                 type="checkbox" 

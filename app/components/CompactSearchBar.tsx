@@ -152,62 +152,62 @@ export default function CompactSearchBar() {
           </div>
           
           <div className="search-form">
-            {/* Year Toggle */}
-            <div className="form-group">
-              <label>學年度</label>
-              <div className="year-toggle">
-                <button 
-                  className={`year-btn ${academicYear === '114' ? 'active' : ''}`}
-                  onClick={() => handleYearChange('114')}
+            {/* Row 1: Year, Method, Scores */}
+            <div className="form-row-main">
+              <div className="form-group compact">
+                <label>學年度</label>
+                <div className="year-toggle">
+                  <button 
+                    className={`year-btn ${academicYear === '114' ? 'active' : ''}`}
+                    onClick={() => handleYearChange('114')}
+                  >
+                    114
+                  </button>
+                  <button 
+                    className={`year-btn ${academicYear === '115' ? 'active' : ''}`}
+                    onClick={() => handleYearChange('115')}
+                  >
+                    115
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-group compact">
+                <label>入學方式</label>
+                <select 
+                  value={admissionMethod} 
+                  onChange={(e) => setAdmissionMethod(e.target.value)}
                 >
-                  114
-                </button>
-                <button 
-                  className={`year-btn ${academicYear === '115' ? 'active' : ''}`}
-                  onClick={() => handleYearChange('115')}
-                >
-                  115
-                </button>
+                  <option value="star_plan">繁星推薦</option>
+                  <option value="personal_application">個人申請</option>
+                  <option value="distribution_admission" disabled={academicYear === '115'}>
+                    分發入學 {academicYear === '115' ? '(本年無)' : ''}
+                  </option>
+                </select>
+              </div>
+
+              <div className="form-group scores-group flex-grow">
+                <label>學測成績</label>
+                <div className="scores-row">
+                  {Object.entries(SUBJECT_LABELS).map(([id, label]) => (
+                    <div key={id} className="score-item">
+                      <span>{label}</span>
+                      <select
+                        value={scores[id as keyof typeof scores]}
+                        onChange={(e) => handleScoreChange(id, e.target.value)}
+                      >
+                        <option value="">--</option>
+                        {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                      </select>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Method */}
-            <div className="form-group">
-              <label>入學方式</label>
-              <select 
-                value={admissionMethod} 
-                onChange={(e) => setAdmissionMethod(e.target.value)}
-              >
-                <option value="star_plan">繁星推薦</option>
-                <option value="personal_application">個人申請</option>
-                <option value="distribution_admission" disabled={academicYear === '115'}>
-                  分發入學 {academicYear === '115' ? '(本年無)' : ''}
-                </option>
-              </select>
-            </div>
-
-            {/* Scores */}
-            <div className="form-group scores-group">
-              <label>學測成績</label>
-              <div className="scores-row">
-                {Object.entries(SUBJECT_LABELS).map(([id, label]) => (
-                  <div key={id} className="score-item">
-                    <span>{label}</span>
-                    <select
-                      value={scores[id as keyof typeof scores]}
-                      onChange={(e) => handleScoreChange(id, e.target.value)}
-                    >
-                      <option value="">--</option>
-                      {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Other filters */}
-            <div className="form-row">
-              <div className="form-group">
+            {/* Row 2: Other filters + Search Button */}
+            <div className="form-row-filters">
+              <div className="form-group compact">
                 <label>英聽</label>
                 <select value={listening} onChange={(e) => setListening(e.target.value)}>
                   <option value="">不篩選</option>
@@ -218,7 +218,7 @@ export default function CompactSearchBar() {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="form-group compact">
                 <label>學群</label>
                 <select value={group} onChange={(e) => setGroup(e.target.value)}>
                   <option value="">全部</option>
@@ -228,7 +228,7 @@ export default function CompactSearchBar() {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="form-group compact">
                 <label>公/私立</label>
                 <select value={publicPrivate} onChange={(e) => setPublicPrivate(e.target.value)}>
                   <option value="">全部</option>
@@ -236,11 +236,11 @@ export default function CompactSearchBar() {
                   <option value="私立">私立</option>
                 </select>
               </div>
-            </div>
 
-            <button className="search-btn" onClick={handleSearch}>
-              重新搜尋
-            </button>
+              <button className="search-btn" onClick={handleSearch}>
+                搜尋
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -348,10 +348,24 @@ export default function CompactSearchBar() {
         }
 
         .search-form {
-          padding: 16px;
+          padding: 12px 16px;
           display: flex;
           flex-direction: column;
+          gap: 10px;
+        }
+
+        .form-row-main {
+          display: flex;
+          align-items: flex-end;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+
+        .form-row-filters {
+          display: flex;
+          align-items: flex-end;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .form-group {
@@ -360,17 +374,25 @@ export default function CompactSearchBar() {
           gap: 4px;
         }
 
+        .form-group.compact {
+          min-width: auto;
+        }
+
+        .form-group.flex-grow {
+          flex: 1;
+        }
+
         .form-group label {
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           color: #666;
           font-weight: 500;
         }
 
         .form-group select {
-          padding: 8px 12px;
+          padding: 6px 10px;
           border: 1px solid #ddd;
-          border-radius: 8px;
-          font-size: 0.9rem;
+          border-radius: 6px;
+          font-size: 0.85rem;
           outline: none;
         }
 
@@ -381,7 +403,7 @@ export default function CompactSearchBar() {
         .year-toggle {
           display: flex;
           background: #f0f0f0;
-          border-radius: 8px;
+          border-radius: 6px;
           padding: 2px;
           gap: 2px;
           width: fit-content;
@@ -390,9 +412,9 @@ export default function CompactSearchBar() {
         .year-btn {
           border: none;
           background: none;
-          padding: 6px 16px;
-          border-radius: 6px;
-          font-size: 0.9rem;
+          padding: 5px 12px;
+          border-radius: 4px;
+          font-size: 0.85rem;
           font-weight: 600;
           color: #666;
           cursor: pointer;
@@ -406,36 +428,36 @@ export default function CompactSearchBar() {
         }
 
         .scores-group {
-          width: 100%;
+          min-width: 320px;
         }
 
         .scores-row {
           display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
+          flex-wrap: nowrap;
+          gap: 6px;
         }
 
         .score-item {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 2px;
           background: #f8fafc;
-          padding: 4px 8px;
-          border-radius: 6px;
+          padding: 4px 6px;
+          border-radius: 4px;
           border: 1px solid #eee;
         }
 
         .score-item span {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           color: #666;
         }
 
         .score-item select {
           border: none;
           background: transparent;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           font-weight: 500;
-          width: 45px;
+          width: 40px;
           padding: 2px;
           outline: none;
         }
@@ -453,13 +475,13 @@ export default function CompactSearchBar() {
           background: #0F5AA8;
           color: white;
           border: none;
-          border-radius: 10px;
-          padding: 12px 24px;
-          font-size: 1rem;
+          border-radius: 8px;
+          padding: 8px 20px;
+          font-size: 0.9rem;
           font-weight: 600;
           cursor: pointer;
-          margin-top: 8px;
           transition: background 0.2s;
+          white-space: nowrap;
         }
 
         .search-btn:hover {
