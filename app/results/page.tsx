@@ -55,8 +55,15 @@ function ResultsContent() {
   const [selectedSchool, setSelectedSchool] = useState<ISchool | null>(null);
   
   // 新增：科系選擇狀態 (從 SchoolDetail 提升到這裡)
-  const [selectedYear, setSelectedYear] = useState<'114' | '115'>('114');
+  // 從 URL 讀取年份，確保與搜尋條件一致
+  const [selectedYear, setSelectedYear] = useState<'114' | '115'>((searchParams.get('year') || '114') as '114' | '115');
   const [selectedDeptIndex, setSelectedDeptIndex] = useState<number>(0);
+  
+  // 同步 URL 年份變化
+  useEffect(() => {
+    const yearFromUrl = (searchParams.get('year') || '114') as '114' | '115';
+    setSelectedYear(yearFromUrl);
+  }, [searchParams]);
   
   // Pagination State (分頁狀態)
   const [page, setPage] = useState(1);

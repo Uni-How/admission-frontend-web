@@ -69,9 +69,6 @@ export default function CompactSearchBar() {
 
   const handleYearChange = (year: string) => {
     setAcademicYear(year);
-    if (year === '115' && admissionMethod === 'distribution_admission') {
-      setAdmissionMethod('star_plan');
-    }
   };
 
   const handleScoreChange = (subject: string, value: string) => {
@@ -110,6 +107,12 @@ export default function CompactSearchBar() {
       {/* Collapsed View - Inline Bar */}
       {!isExpanded && (
         <div className="compact-search-bar" onClick={() => setIsExpanded(true)}>
+          {/* 學年度 */}
+          <div className="bar-section year-section">
+            <span className="section-label">學年度</span>
+            <span className="section-value">{currentYear}</span>
+          </div>
+          
           {/* 入學方式 */}
           <div className="bar-section method-section">
             <span className="section-label">入學方式</span>
@@ -180,9 +183,7 @@ export default function CompactSearchBar() {
                 >
                   <option value="star_plan">繁星推薦</option>
                   <option value="personal_application">個人申請</option>
-                  <option value="distribution_admission" disabled={academicYear === '115'}>
-                    分發入學 {academicYear === '115' ? '(本年無)' : ''}
-                  </option>
+                  <option value="distribution_admission">分發入學</option>
                 </select>
               </div>
 

@@ -125,7 +125,7 @@ export async function GET(request: Request) {
 
     // 2. Advanced Params (進階篩選)
     const year = searchParams.get("year") || "114"; // 預設 114學年度
-    const method = searchParams.get("method"); // 入學管道 (star_plan / personal_application)
+    const method = searchParams.get("method") || "personal_application"; // 入學管道 預設個人申請
     const group = searchParams.get("group"); // 學群
     const listening = searchParams.get("listening"); // 英聽要求
 
@@ -301,9 +301,38 @@ export async function GET(request: Request) {
         },
       });
 
+      // 5.3 提取 115 年度分發入學計畫以檢查去年結果 (114 最低錄取分數/人數)
+      // 無論使用者查詢年度，這裡都額外取得 115 年度的 distribution 資料來判斷 last_year_pass_data 是否存在
+      pipeline.push({
+        $addFields: {
+          __last_year_entry: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: {
+                    $objectToArray: {
+                      $ifNull: ["$departments.admission_data", {}],
+                    },
+                  },
+                  as: "item",
+                  cond: { $eq: ["$$item.k", "115"] },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      });
+      pipeline.push({
+        $addFields: {
+          __last_year_plan: "$__last_year_entry.v.plans.distribution_admission",
+        },
+      });
+
       // [Stage 6] Filter Logic ($match) - 核心篩選階段
       const advancedMatch: any = {
         __target_plan: { $ne: null }, // 必須有該年度計畫 (防呆)
+        __year_entry: { $ne: null }, // 確保該年度資料存在
       };
 
       // 學群篩選 (如果在 Stage 3 沒做，這裡會再次確認，或者作為雙重保險)
@@ -395,6 +424,13 @@ export async function GET(request: Request) {
             userListeningLevel,
           ],
         };
+      }
+
+      // 在查詢 114 年度的分發入學時，只返回具備去年錄取結果的科系
+      // 說明：資料庫將 114 年度的錄取結果嵌入在 115 年度的 distribution_admission 的 last_year_pass_data
+      // 因此當 year=114 且 method=distribution_admission 時，要求 __last_year_plan.last_year_pass_data 不為 null
+      if (planKey === "distribution_admission" && year === "114") {
+        advancedMatch["__last_year_plan.last_year_pass_data"] = { $ne: null };
       }
 
       // Subject Score Filter (學測成績篩選 - 支持AND/OR邏輯)

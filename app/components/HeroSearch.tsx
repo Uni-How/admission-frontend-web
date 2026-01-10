@@ -47,12 +47,9 @@ export default function HeroSearch() {
     loadMetadata();
   }, []);
 
-  // Logic: 115學年度暫無分發入學資料的防呆機制
+  // Logic: Handle year changes
   const handleYearChange = (year: string) => {
     setAcademicYear(year);
-    if (year === '115' && admissionMethod === 'distribution_admission') {
-      setAdmissionMethod('star_plan'); // 若切換到 115 且原本選分發，強制切回繁星
-    }
   };
 
   // 15 to 1 (級分下拉選單生成用)
@@ -128,9 +125,7 @@ export default function HeroSearch() {
           >
             <option value="star_plan">繁星推薦</option>
             <option value="personal_application">個人申請</option>
-            <option value="distribution_admission" disabled={academicYear === '115'}>
-              分發入學 {academicYear === '115' ? '(本年無)' : ''}
-            </option>
+            <option value="distribution_admission">分發入學</option>
           </select>
         </div>
 
